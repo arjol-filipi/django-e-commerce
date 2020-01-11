@@ -17,7 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_countries',
     'django.contrib.sites',
-
+    'gunicorn',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
