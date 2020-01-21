@@ -27,22 +27,21 @@
               <option value="{{ cat }}">{{ cat }}</option>
               {% endfor %}
             </select> {% endcomment %}
+
+
 <form class="form-inline pl-7 float-right" action="{% url 'core:search' %}" method="get">
-
-
-              <select id="category" class="form" name="category">
+           
+              <select id="category" class="form-control" name="category">
               <option selected>All</option>
               {% for cat in category %}
-              <option value="{{ cat.1 }}">{{ cat.1 }}</option>
+              <option value="{{ cat.1 }}" {% if sc == cat.1 %}selected {% endif %}>{{ cat.1 }}</option>
               {% endfor %}
               </select>
-           
-           
           <!-- Links -->
 
           
             <div class="md-form my-0">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" name="q" aria-label="Search">
+              <input class="form-control mr-sm-2" type="text" placeholder="{{sq}}" value="{{sq}}" name="q" aria-label="Search">
             </div>
           </form>
         </div>

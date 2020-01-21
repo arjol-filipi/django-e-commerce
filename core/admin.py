@@ -13,12 +13,14 @@ class OrderAdmin(admin.ModelAdmin):
         'user_username','ref_code'
     ]
     actions = [make_refund_accepted]
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ['title','category']
 
 class AddressAdmin(admin.ModelAdmin):
     list_display = ['user','street_address','apartment_address','country','zip','address_type','default']
     list_filter = ['user','country','address_type','default']
     search_fields = ['user','country','zip']
-admin.site.register(Item)
+admin.site.register(Item,ItemAdmin)
 admin.site.register(OrderItem)
 admin.site.register(Order,OrderAdmin)
 admin.site.register(Address,AddressAdmin)

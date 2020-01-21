@@ -7,8 +7,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView,DetailView,View
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Coupon,Item, Order, OrderItem,Address,Payment,Refound,UserProfile
+from .models import Coupon,Item, Order, OrderItem,Address,Payment,Refound,UserProfile,CATEGORY_CHOICES
 from .forms import CheckoutForm,CouponForm,RefundForm,PaymentForm
+
+from django.db.models import Q
 
 import stripe
 import random
@@ -317,10 +319,57 @@ class PaymentView (View):
                 return redirect("/")
                         
         
+class Search(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "search.html"
+    print("000")
+    def get_context_data(self,**kwargs):
+        context = super(Search,self).get_context_data(**kwargs)
+        query = self.request.GET.get('q')
+        context['sq'] = query
+        sc = self.request.GET.get('category')
+        context['sc'] = sc
+        context['category'] = CATEGORY_CHOICES
+        
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        category = self.request.GET.get('category')
+        print("cat",category)
+        if category !="All" and query =='':
+            object_list = Item.objects.filter(
+                category__in=category
+            )
+        if category !="All" :
+            object_list = Item.objects.filter(
+                Q(title__icontains=query)|Q(description__icontains=query)
+            )
+            object_list = object_list.filter(
+                category__in=category
+            )
+        else:
+            object_list = Item.objects.filter(
+                Q(title__icontains=query)|Q(description__icontains=query)
+            )
+        
+            #object_list = object_list.filter(category=category)
+        if not object_list:
+            messages.warning(self.request,"No items match")
+            
+        return object_list
+
+
 class HomeView (ListView):
     model = Item
     paginate_by = 10
     template_name ="home.html"
+    def get_context_data(self,**kwargs):
+        context = super(HomeView,self).get_context_data(**kwargs)
+        context['category'] = CATEGORY_CHOICES
+        
+        return context
 
 class OrderSummary(LoginRequiredMixin ,View):
     def get(self, *args , **kwargs):
